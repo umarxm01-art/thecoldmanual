@@ -7,7 +7,8 @@ export async function api(method, path, body) {
   let res;
   try {
     res = await fetch("/api" + path, {
-      method, credentials: "same-origin", keepalive: method !== "GET" && body !== undefined && JSON.stringify(body).length < 60000,
+      /* keepalive only while the page is closing: browsers cap all in-flight keepalive bodies at 64 KB together, and going over makes fetch fail as if offline */
+      method, credentials: "same-origin", keepalive: method !== "GET" && body !== undefined && document.visibilityState === "hidden" && JSON.stringify(body).length < 60000,
       headers: Object.assign({ "X-Requested-With": "osi" }, body !== undefined ? { "Content-Type": "application/json" } : {}),
       body: body !== undefined ? JSON.stringify(body) : undefined
     });

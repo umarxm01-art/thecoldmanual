@@ -118,7 +118,7 @@ async function answers(ctx) {
   let a = b.all;
   if (show === "unchecked") a = a.filter((e) => !e.checked && !e.hidden); else if (show === "hidden") a = a.filter((e) => e.hidden); else if (show === "added") a = a.filter((e) => e.src === "added"); else if (show === "common") a = a.filter((e) => e.src === "common");
   if (q) a = a.filter((e) => [e.q, e.a].concat(e.alts || []).join(" ").toLowerCase().indexOf(q) > -1);
-  const skip = Math.max(0, +ctx.query.skip || 0), limit = Math.min(100, +ctx.query.limit || 30);
+  const skip = Math.max(0, Math.floor(+ctx.query.skip) || 0), limit = Math.max(1, Math.min(100, Math.floor(+ctx.query.limit) || 30));
   return { body: { total: a.length, items: a.slice(skip, skip + limit).map((e) => ({ id: e.id, src: e.src, q: e.q, a: e.a, alts: e.alts || [], links: e.links || [], checked: !!e.checked, hidden: !!e.hidden })) } };
 }
 async function patchAnswer(ctx) {

@@ -13,7 +13,7 @@ async function hashPassword(pw) {
 async function verifyPassword(pw, stored) {
   const p = String(stored || "").split("$");
   if (p.length !== 4 || p[0] !== "scrypt") return false;
-  const key = await scrypt(pw, Buffer.from(p[2], "base64"), +p[1]);
+  let key; try { key = await scrypt(pw, Buffer.from(p[2], "base64"), +p[1]); } catch (e) { return false; } /* a damaged stored hash fails the login instead of crashing it */
   const want = Buffer.from(p[3], "base64");
   return key.length === want.length && crypto.timingSafeEqual(key, want);
 }

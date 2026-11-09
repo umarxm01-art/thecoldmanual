@@ -55,7 +55,7 @@ The name in the UI is The Cold Manual. Internal identifiers (the `OSI` namespace
 
 ## Run it
 
-Needs Node 18+ and a MongoDB (Atlas free tier works).
+Needs Node 20+ and a MongoDB (Atlas free tier works).
 
 ```bash
 npm run install:all

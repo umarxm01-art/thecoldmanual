@@ -12,7 +12,7 @@ async function newCode(ctx, fields, prefix) {
 }
 
 async function stats(ctx) {
-  const [all, members, managers, admins, orgs, codes] = await Promise.all([ctx.db.listUsers({ limit: 1 }), ctx.db.listUsers({ role: "member", limit: 1 }), ctx.db.listUsers({ role: "manager", limit: 1 }), ctx.db.listUsers({ role: "admin", limit: 1 }), ctx.db.listOrgs(), ctx.db.listCodes()]);
+  const [all, members, managers, admins, orgs, codes] = await Promise.all([ctx.db.listUsers({ limit: 1 }), ctx.db.listUsers({ role: "member", limit: 1 }), ctx.db.listUsers({ role: "manager", limit: 1 }), ctx.db.listUsers({ role: "admin", limit: 1 }), ctx.db.listOrgs(), ctx.db.listCodes({ limit: 1000000 })]); /* count every code, not just the newest 500 */
   return { body: { users: all.total, members: members.total, managers: managers.total, admins: admins.total, orgs: orgs.length, codes: { total: codes.length, active: codes.filter((c) => !c.disabled && c.uses < c.maxUses).length, uses: codes.reduce((a, c) => a + c.uses, 0) } } };
 }
 

@@ -28,7 +28,16 @@ function createApp({ db, cfg, content }) {
     Object.keys(s.headers).forEach((k) => res.setHeader(k, s.headers[k]));
     res.sendFile(s.file, { dotfiles: "deny" });
   });
-  app.use((err, req, res, next) => { console.error("[server]", err && err.stack ? err.stack : err); if (res.headersSent) return next(err); res.status(500).json({ error: "Something went wrong on our side. Try again." }); });
+  app.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
+    Object.keys(d.securityHeaders).forEach((k) => res.setHeader(k, d.securityHeaders[k]));
+    res.setHeader("Cache-Control", "no-store");
+    /* body parser errors (too large, bad encoding) are the client's fault: answer with their status, so the app stops retrying */
+    const status = err && (err.status || err.statusCode);
+    if (status >= 400 && status < 500) return res.status(status).json({ error: status === 413 ? "That entry is too large." : "The request could not be read." });
+    console.error("[server]", err && err.stack ? err.stack : err);
+    res.status(500).json({ error: "Something went wrong on our side. Try again." });
+  });
   return app;
 }
 module.exports = { createApp };
