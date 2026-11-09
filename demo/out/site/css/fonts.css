@@ -1,0 +1,8 @@
+/* The Cold Manual fonts: TeX Gyre Schola (a Century Schoolbook design) and TeX Gyre Heros, subset to Latin. GUST Font License, see fonts/GUST-FONT-LICENSE.txt. */
+@font-face { font-family: "Schola"; src: url("../fonts/schola-regular.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Schola"; src: url("../fonts/schola-italic.woff") format("woff"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Schola"; src: url("../fonts/schola-bold.woff") format("woff"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Schola"; src: url("../fonts/schola-bolditalic.woff") format("woff"); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "Heros"; src: url("../fonts/heros-regular.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Heros"; src: url("../fonts/heros-italic.woff") format("woff"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Heros"; src: url("../fonts/heros-bold.woff") format("woff"); font-weight: 700; font-style: normal; font-display: swap; }

@@ -1,0 +1,20 @@
+{
+  "name": "outbound-si-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Cold Manual API: accounts, progress sync, skill data, team dashboard",
+  "main": "src/index.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "dev:memory": "node src/index.js --memory",
+    "seed": "node src/scripts/seed.js",
+    "test": "node --test test/*.test.js",
+    "test:db": "node --test test/db.contract.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongoose": "^8.8.0"
+  }
+}

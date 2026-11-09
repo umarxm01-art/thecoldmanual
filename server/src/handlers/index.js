@@ -1,0 +1,66 @@
+"use strict";
+const auth = require("./auth"), kv = require("./kv"), org = require("./org"), admin = require("./admin"), webhook = require("./webhook"), offers = require("./offers"), ai = require("./ai"), askH = require("./ask");
+
+const ok = async () => ({ body: { ok: true } });
+const content = async (ctx) => ({ raw: { type: "application/json; charset=utf-8", text: ctx.content.raw, etag: ctx.content.etag, filename: null } });
+const meta = async (ctx) => ({ body: ctx.content.meta });
+
+const LOGIN = { name: "login", windowMs: 15 * 60 * 1000, max: 10 }, REGISTER = { name: "register", windowMs: 60 * 60 * 1000, max: 10 }, HOOK = { name: "hook", windowMs: 60 * 1000, max: 60 }, AI = { name: "ai", windowMs: 60 * 1000, max: 30 }, ASK = { name: "ask", windowMs: 60 * 1000, max: 30 };
+/* a: who may call it. none | user | manager | admin */
+module.exports = [
+  { m: "GET", p: "/api/health", a: "none", h: ok },
+  { m: "GET", p: "/api/public/meta", a: "none", h: meta },
+  { m: "POST", p: "/api/auth/register", a: "none", limit: REGISTER, h: auth.register },
+  { m: "POST", p: "/api/auth/login", a: "none", limit: LOGIN, h: auth.login },
+  { m: "POST", p: "/api/auth/logout", a: "none", h: auth.logout },
+  { m: "GET", p: "/api/auth/me", a: "user", h: auth.me },
+  { m: "POST", p: "/api/auth/logout-all", a: "user", h: auth.logoutAll },
+  { m: "POST", p: "/api/auth/password", a: "user", limit: LOGIN, h: auth.changePassword },
+  { m: "PATCH", p: "/api/auth/profile", a: "user", h: auth.profile },
+  { m: "POST", p: "/api/auth/leave-team", a: "user", h: auth.leaveTeam },
+  { m: "GET", p: "/api/content", a: "user", h: content },
+  { m: "GET", p: "/api/kv", a: "user", h: kv.all },
+  { m: "POST", p: "/api/kv/reset", a: "user", h: kv.reset },
+  { m: "PUT", p: "/api/kv/:key", a: "user", h: kv.put },
+  { m: "DELETE", p: "/api/kv/:key", a: "user", h: kv.del },
+  { m: "GET", p: "/api/ai/status", a: "user", h: ai.status },
+  { m: "POST", p: "/api/ai", a: "user", limit: AI, h: ai.run },
+  { m: "POST", p: "/api/ask", a: "user", limit: ASK, h: askH.ask },
+  { m: "POST", p: "/api/ask/miss", a: "user", limit: ASK, h: askH.miss },
+  { m: "GET", p: "/api/admin/questions", a: "admin", h: askH.questions },
+  { m: "POST", p: "/api/admin/questions/:id/approve", a: "admin", h: askH.approve },
+  { m: "POST", p: "/api/admin/questions/:id/merge", a: "admin", h: askH.merge },
+  { m: "POST", p: "/api/admin/questions/:id/reject", a: "admin", h: askH.reject },
+  { m: "GET", p: "/api/admin/answers", a: "admin", h: askH.answers },
+  { m: "PATCH", p: "/api/admin/answers/:id", a: "admin", h: askH.patchAnswer },
+  { m: "GET", p: "/api/offers", a: "user", h: offers.offers },
+  { m: "POST", p: "/api/offers/call", a: "user", h: offers.requestCall },
+  { m: "POST", p: "/api/offers/call/cancel", a: "user", h: offers.cancelCall },
+  { m: "GET", p: "/api/org", a: "manager", h: org.manager.overview },
+  { m: "POST", p: "/api/org/code/rotate", a: "manager", h: org.manager.rotate },
+  { m: "GET", p: "/api/org/export", a: "manager", h: org.manager.exportCsv },
+  { m: "GET", p: "/api/org/members/:id", a: "manager", h: org.manager.memberDetail },
+  { m: "DELETE", p: "/api/org/members/:id", a: "manager", h: org.manager.removeMember },
+  { m: "GET", p: "/api/admin/stats", a: "admin", h: admin.stats },
+  { m: "GET", p: "/api/admin/codes", a: "admin", h: admin.listCodes },
+  { m: "POST", p: "/api/admin/codes", a: "admin", h: admin.createCodes },
+  { m: "PATCH", p: "/api/admin/codes/:id", a: "admin", h: admin.patchCode },
+  { m: "DELETE", p: "/api/admin/codes/:id", a: "admin", h: admin.deleteCode },
+  { m: "GET", p: "/api/admin/users", a: "admin", h: admin.listUsers },
+  { m: "PATCH", p: "/api/admin/users/:id", a: "admin", h: admin.patchUser },
+  { m: "GET", p: "/api/admin/users/:id/refund-check", a: "admin", h: admin.refundCheck },
+  { m: "POST", p: "/api/admin/users/:id/reset-password", a: "admin", h: admin.resetPassword },
+  { m: "DELETE", p: "/api/admin/users/:id", a: "admin", h: admin.deleteUser },
+  { m: "GET", p: "/api/admin/requests", a: "admin", h: offers.adminList },
+  { m: "PATCH", p: "/api/admin/requests/:uid", a: "admin", h: offers.adminPatch },
+  { m: "GET", p: "/api/admin/orgs", a: "admin", h: admin.listOrgs },
+  { m: "POST", p: "/api/admin/orgs", a: "admin", h: admin.createOrg },
+  { m: "GET", p: "/api/admin/orgs/:id", a: "admin", h: org.admin.overview },
+  { m: "PATCH", p: "/api/admin/orgs/:id", a: "admin", h: admin.patchOrg },
+  { m: "DELETE", p: "/api/admin/orgs/:id", a: "admin", h: admin.deleteOrg },
+  { m: "POST", p: "/api/admin/orgs/:id/code/rotate", a: "admin", h: org.admin.rotate },
+  { m: "GET", p: "/api/admin/orgs/:id/export", a: "admin", h: org.admin.exportCsv },
+  { m: "GET", p: "/api/admin/orgs/:id/members/:uid", a: "admin", h: org.admin.memberDetail },
+  { m: "DELETE", p: "/api/admin/orgs/:id/members/:uid", a: "admin", h: org.admin.removeMember },
+  { m: "POST", p: "/api/webhooks/payment", a: "none", noCsrf: true, limit: HOOK, h: webhook.payment }
+];

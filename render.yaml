@@ -1,0 +1,51 @@
+# Render Blueprint: New > Blueprint in the Render dashboard, pick this repo.
+# One Node web service serves the API, the members app (/app/) and the sales page.
+# MongoDB is not hosted on Render: use MongoDB Atlas and paste its URI into MONGODB_URI.
+services:
+  - type: web
+    name: outbound-si
+    runtime: node
+    plan: free  # spins down when idle; switch to starter ($7/mo) for always-on
+    buildCommand: npm run install:all && npm run build
+    # seed is safe to run on every start: it only creates the admin / preview code if missing
+    startCommand: npm run seed && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PREVIEW_CODE
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: CALL_ENABLED
+        value: "1"
+      - key: CALL_PRICE
+        value: "Rs 10,000"
+      - key: CALL_MINUTES
+        value: "60"
+      - key: CALL_PAY_URL
+        sync: false
+      - key: CALL_BOOK_URL
+        sync: false
+      - key: AI_PROVIDER
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false
+      - key: AI_DAILY_LIMIT
+        value: "5"
+      - key: AI_MONTHLY_LIMIT
+        value: "30"
