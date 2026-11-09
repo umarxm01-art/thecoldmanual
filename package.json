@@ -5,7 +5,7 @@
   "engines": { "node": ">=20" },
   "description": "The Cold Manual: sales training platform with accounts, skill map and team dashboard (MERN)",
   "scripts": {
-    "install:all": "npm --prefix server install && npm --prefix client install",
+    "install:all": "npm --prefix server install && npm --prefix client install --include=dev",
     "content": "node scripts/export-content.js",
     "build": "node scripts/export-content.js && node scripts/build-legacy.js && node scripts/build-site.js && npm --prefix client run build",
     "seed": "npm --prefix server run seed",
